@@ -9,12 +9,9 @@ export const sampleProductsData: Prisma.ProductCreateInput[] = [
       "Comfortable over-ear wireless headphones with noise cancellation.",
     longDescription:
       "Experience high-fidelity sound and long-lasting comfort with our wireless Bluetooth headphones. Features active noise cancellation and 20 hours of battery life.",
-    originalPrice: new Prisma.Decimal(199.99),
-    salePrice: new Prisma.Decimal(149.99),
-    images: JSON.stringify([
-      "https://example.com/images/headphones-1.jpg",
-      "https://example.com/images/headphones-2.jpg",
-    ]),
+    originalPrice: 199.99,
+    salePrice: 149.99,
+    images: JSON.stringify(["/images/pink.jpg"]),
     stock: 25,
     params: JSON.stringify([
       { key: "Color", value: "Black" },
@@ -29,11 +26,10 @@ export const sampleProductsData: Prisma.ProductCreateInput[] = [
       "Comfortable and adjustable office chair for long working hours.",
     longDescription:
       "Designed to support your posture and reduce back pain, this ergonomic office chair features adjustable height, lumbar support, and breathable mesh.",
-    originalPrice: new Prisma.Decimal(299.0),
-    salePrice: new Prisma.Decimal(249.0),
+    originalPrice: 299.0,
+    salePrice: 249.0,
     images: JSON.stringify([
-      "https://example.com/images/chair-1.jpg",
-      "https://example.com/images/chair-2.jpg",
+      "/images/blue.jpg",
     ]),
     stock: 15,
     params: JSON.stringify([
@@ -49,9 +45,9 @@ export const sampleProductsData: Prisma.ProductCreateInput[] = [
       "55-inch 4K Ultra HD Smart TV with HDR and voice control.",
     longDescription:
       "Enjoy stunning 4K resolution and access to all your favorite streaming services with this Smart TV. Includes HDR support, voice control, and multiple HDMI inputs.",
-    originalPrice: new Prisma.Decimal(799.99),
-    salePrice: new Prisma.Decimal(699.99),
-    images: JSON.stringify(["https://example.com/images/tv-1.jpg"]),
+    originalPrice: 799.99,
+    salePrice: 699.99,
+    images: JSON.stringify(["/images/white.jpg"]),
     stock: 10,
     params: JSON.stringify([
       { key: "Screen Size", value: "55 inches" },
@@ -66,9 +62,9 @@ export const sampleProductsData: Prisma.ProductCreateInput[] = [
       "Reusable insulated water bottle that keeps drinks cold for 24 hours.",
     longDescription:
       "Eco-friendly stainless steel water bottle with double-wall insulation. Perfect for keeping your drinks cold or hot for hours.",
-    originalPrice: new Prisma.Decimal(25.0),
+    originalPrice: 25.0,
     salePrice: null,
-    images: JSON.stringify(["https://example.com/images/bottle-1.jpg"]),
+    images: JSON.stringify(["/images/red.jpg"]),
     stock: 50,
     params: JSON.stringify([
       { key: "Capacity", value: "750ml" },
@@ -82,11 +78,10 @@ export const sampleProductsData: Prisma.ProductCreateInput[] = [
     shortDescription: "High-performance gaming laptop with NVIDIA graphics.",
     longDescription:
       "This gaming laptop comes equipped with the latest NVIDIA GeForce RTX graphics, a high refresh rate display, and a powerful Intel i7 processor for smooth gaming.",
-    originalPrice: new Prisma.Decimal(1599.0),
-    salePrice: new Prisma.Decimal(1399.0),
+    originalPrice: 1599.0,
+    salePrice: 1399.0,
     images: JSON.stringify([
-      "https://example.com/images/laptop-1.jpg",
-      "https://example.com/images/laptop-2.jpg",
+      "/images/orange.jpg",
     ]),
     stock: 8,
     params: JSON.stringify([
