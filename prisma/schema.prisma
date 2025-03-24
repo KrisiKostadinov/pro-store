@@ -3,29 +3,86 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
+// starts auth
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
-  name      String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String    @id @default(cuid()) @db.VarChar(100)
+  email         String    @unique @db.VarChar(100)
+  password      String?
+  name          String?
+  emailVerified DateTime? @map("email_verified") @db.Timestamp(6)
+  image         String?
+  role          String    @default("USER") @db.VarChar(100)
+  address       Json      @default("[]")
+  paymentMethod String    @default("cash") @map("payment_method") @db.VarChar(100)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  Account       Account[]
+  Session       Session[]
 
   @@map("users")
 }
 
+model Account {
+  userId                   String  @db.VarChar(100)
+  type                     String  @db.VarChar(100)
+  provider                 String  @db.VarChar(100)
+  providerAccountId        String  @db.VarChar(100)
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String? @db.VarChar(100)
+  scope                    String? @db.VarChar(100)
+  id_token                 String? @db.Text
+  session_state            String? @db.VarChar(100)
+  refresh_token_expires_in Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  userId       String   @db.VarChar(100)
+  sessionToken String   @unique @db.VarChar(100)
+  expires      DateTime @db.Timestamp(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String   @db.VarChar(100)
+  token      String   @db.VarChar(100)
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ends auth
+
 model Product {
-  id               String   @id @default(cuid())
-  name             String
-  slug             String   @unique
+  id               String   @id @default(cuid()) @db.VarChar(191)
+  name             String   @db.VarChar(191)
+  slug             String   @unique @db.VarChar(191)
   shortDescription String?  @map("short_description")
   longDescription  String?  @map("long_description")
-  originalPrice    Decimal  @map("original_price")
-  salePrice        Decimal? @map("sale_price")
+  originalPrice    Float    @map("original_price")
+  salePrice        Float?   @map("sale_price")
   images           Json     @default("[]")
   stock            Int      @default(1)
   params           Json     @default("[]")
