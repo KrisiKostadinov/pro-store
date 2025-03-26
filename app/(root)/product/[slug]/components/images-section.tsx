@@ -17,7 +17,7 @@ export default function ImagesSection({ product }: Props) {
 
   return (
     <div className="mt-5 space-y-4">
-      <div className="border-4 border-gray-100 rounded-md overflow-hidden">
+      <div className="border-4 dark:border-gray-950 border-gray-100 rounded-md overflow-hidden">
         <Image
           src={images[current]}
           alt={product.name}
@@ -37,7 +37,7 @@ export default function ImagesSection({ product }: Props) {
             height={100}
             onClick={() => setCurrent(index)}
             className={cn(
-              "border-4 border-gray-100 rounded-md overflow-hidden cursor-pointer",
+              "border-4 dark:border-gray-950 border-gray-100 rounded-md overflow-hidden cursor-pointer",
               current === index && "border-destructive/20"
             )}
           />

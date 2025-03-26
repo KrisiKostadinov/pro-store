@@ -14,7 +14,7 @@ export default function ProductCard({ product }: Props) {
   const images = product.images ? JSON.parse(product.images.toString()) : [];
 
   return (
-    <div className="relative w-full h-full bg-white shadow border rounded-md overflow-hidden">
+    <div className="relative w-full h-full dark:bg-black bg-white shadow border rounded-md overflow-hidden">
       {product.salePrice && (
         <div className="absolute top-5 left-5 bg-red-500 text-white py-1 px-2 rounded z-10">
           ПРОМОЦИЯ

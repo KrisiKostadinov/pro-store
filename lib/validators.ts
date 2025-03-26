@@ -12,3 +12,8 @@ export const insertProductSchema = z.object({
   images: z.array(z.string()).min(1, { message: "Трябва да качите поне една снимка на продукта." }),
   isFeatured: z.boolean(),
 });
+
+export const signInFormSchema = z.object({
+  email: z.string().email({ message: "Невалиден имейл адрес." }),
+  password: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
+});
