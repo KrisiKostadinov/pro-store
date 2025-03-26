@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { twMerge } from "tailwind-merge"
+import { ZodError } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -30,9 +31,7 @@ export function createSlug(text: string) {
     .replace(/-+/g, '-');
 }
 
-import { ZodError } from "zod";
-
-export function handleError(error: unknown, values: Record<string, any> = {}) {
+export function handleError(error: unknown, _values: Record<string, unknown> = {}, message: string = "Неочаквана грешка.") {
   if (isRedirectError(error)) {
     throw error;
   }
@@ -41,13 +40,13 @@ export function handleError(error: unknown, values: Record<string, any> = {}) {
     return {
       success: false,
       messages: error.errors.map((x) => x.message),
-      values,
+      values: _values,
     };
   }
 
   return {
     success: false,
-    message: "Възникна грешка. Опитайте отново.",
-    values,
+    message: message,
+    values: _values,
   };
 }

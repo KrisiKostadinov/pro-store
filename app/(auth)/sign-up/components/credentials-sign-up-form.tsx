@@ -25,7 +25,7 @@ export default function CredentialsSignUpForm() {
 
   useEffect(() => {
     if (data && !data.success && data.values) {
-      setFormValues(data.values);
+      setFormValues(data.values as typeof signUpDefaultValues);
     }
   }, [data]);
 

@@ -3,7 +3,6 @@
 import { Session } from "next-auth";
 import Link from "next/link";
 import { UserIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";

@@ -6,9 +6,10 @@ import { prisma } from "@/db/prisma";
 import { signInFormSchema, signUpFormSchema } from "@/lib/validators";
 import { signIn, signOut } from "@/auth";
 import { handleError } from "@/lib/utils";
+import { FormResponse } from "@/types";
 
 export async function signInWithCredentials(
-  prevState: unknown,
+  _prevState: unknown,
   formData: FormData
 ) {
   const values = {
@@ -22,11 +23,11 @@ export async function signInWithCredentials(
     await signIn("credentials", user);
     return { success: true, message: "Успешно влизане!" };
   } catch (error) {
-    return handleError(error, values);
+    return handleError(error, values, "Имейл адресът или паролата са невалидни.") as FormResponse;
   }
 }
 
-export async function signUpUser(prevState: unknown, formData: FormData) {
+export async function signUpUser(_prevState: unknown, formData: FormData) {
   const values = {
     name: formData.get("name") as string,
     email: formData.get("email") as string,
@@ -56,7 +57,7 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
 
     return { success: true, message: "Успешно създаден нов потребител." };
   } catch (error) {
-    return handleError(error, values);
+    return handleError(error, values, "Имейл адресът е зает.") as FormResponse;
   }
 }
 
