@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { compareSync } from "bcrypt-ts-edge";
 
 import { prisma } from "@/db/prisma";
-import { signInFormSchema } from "./lib/validators";
+import { signInFormSchema } from "@/lib/validators";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
@@ -28,7 +28,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         if (compareSync(credentials.password as string, user.password)) {
-          return { id: user.id, email: user.email, role: user.role };
+          return { id: user.id, name: user.name, email: user.email, role: user.role };
         } else {
           return null;
         }
@@ -43,12 +43,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.name = user.name;
+        token.image = user.image;
       }
       return token;
     },
     async session({ token, session }) {
       if (token) {
         session.user.role = token.role;
+        token.name = token.name;
+        token.image = token.image;
       }
       return session;
     },

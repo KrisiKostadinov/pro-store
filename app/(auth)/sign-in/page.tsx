@@ -11,11 +11,17 @@ export const metadata: Metadata = {
   title: "Влизане в профила",
 };
 
-export default async function SignInPage() {
+type Props = {
+  searchParams: Promise<{ callbackUrl: string }>;
+};
+
+export default async function SignInPage({ searchParams }: Props) {
+  const { callbackUrl } = await searchParams;
+
   const session = await auth();
 
   if (session) {
-    redirect("/");
+    redirect(callbackUrl || "/");
   }
 
   return (

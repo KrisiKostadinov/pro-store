@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { LogInIcon } from "lucide-react";
 import Link from "next/link";
@@ -16,6 +17,9 @@ export default function CredentialsSignInForm() {
     success: false,
     message: "",
   });
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const SignInButton = () => {
     const { pending } = useFormStatus();
@@ -36,6 +40,8 @@ export default function CredentialsSignInForm() {
 
   return (
     <form action={action}>
+      <input type="hidden" value={callbackUrl} />
+      
       <div className="space-y-5">
         <div className="space-y-1">
           <Label htmlFor="email">Имейл</Label>

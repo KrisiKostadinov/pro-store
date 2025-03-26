@@ -1,30 +1,30 @@
 "use client";
 
+import { Session } from "next-auth";
+import { useState } from "react";
 import Link from "next/link";
 import {
   MenuIcon,
   SeparatorHorizontal,
   ShoppingCart,
-  UserIcon,
 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import ModeToggle from "@/components/shared/header/theme-toggle";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import UserButton from "@/components/shared/header/user-button";
 
-export default function Menu() {
+type Props = {
+  session: Session | null;
+}
+
+export default function Menu({ session }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="flex justify-end gap-3">
-      <nav className="hidden md:flex w-full max-w-xs gap-1">
-        <Button asChild size={"lg"}>
-          <Link href={"/sign-in"}>
-            <UserIcon />
-            <span>Вход</span>
-          </Link>
-        </Button>
+      <nav className="hidden md:flex md:items-center w-full max-w-xs gap-1">
+        <UserButton session={session} />
         <Button asChild variant={"ghost"} size={"lg"}>
           <Link href={"/cart"}>
             <ShoppingCart />
