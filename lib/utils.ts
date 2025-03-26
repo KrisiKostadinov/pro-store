@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -27,4 +28,26 @@ export function createSlug(text: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/-+/g, '-');
+}
+
+import { ZodError } from "zod";
+
+export function handleError(error: unknown, values: Record<string, any> = {}) {
+  if (isRedirectError(error)) {
+    throw error;
+  }
+
+  if (error instanceof ZodError) {
+    return {
+      success: false,
+      messages: error.errors.map((x) => x.message),
+      values,
+    };
+  }
+
+  return {
+    success: false,
+    message: "Възникна грешка. Опитайте отново.",
+    values,
+  };
 }

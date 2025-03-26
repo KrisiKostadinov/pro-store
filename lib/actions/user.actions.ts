@@ -1,12 +1,11 @@
 "use server";
 
-import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { hashSync } from "bcrypt-ts-edge";
 import { prisma } from "@/db/prisma";
-import { ZodError } from "zod";
 
 import { signInFormSchema, signUpFormSchema } from "@/lib/validators";
 import { signIn, signOut } from "@/auth";
+import { handleError } from "@/lib/utils";
 
 export async function signInWithCredentials(
   prevState: unknown,
@@ -23,20 +22,7 @@ export async function signInWithCredentials(
     await signIn("credentials", user);
     return { success: true, message: "Успешно влизане!" };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
-    if (error instanceof ZodError) {
-      const messages = error.errors.map((x) => x.message);
-      return { success: false, messages, values };
-    }
-
-    return {
-      success: false,
-      message: "Невалидни са имейл адрес или парола.",
-      values,
-    };
+    return handleError(error, values);
   }
 }
 
@@ -70,20 +56,7 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
 
     return { success: true, message: "Успешно създаден нов потребител." };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
-    if (error instanceof ZodError) {
-      const messages = error.errors.map((x) => x.message);
-      return { success: false, messages, values };
-    }
-
-    return {
-      success: false,
-      message: "Имейл адресът е зает.",
-      values,
-    };
+    return handleError(error, values);
   }
 }
 
