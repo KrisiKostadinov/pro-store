@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Product } from "@prisma/client";
-import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import ProductPrice from "@/components/shared/product/product-price";
 
 type Props = {
   product: Product;
@@ -21,7 +21,7 @@ export default function ProductCard({ product }: Props) {
         </div>
       )}
       <Link
-        href={`/product/${product.id}`}
+        href={`/product/${product.slug}`}
         className="h-full flex flex-col justify-between gap-5"
       >
         {images[0] && (
@@ -42,22 +42,8 @@ export default function ProductCard({ product }: Props) {
           <Button className="cursor-pointer" variant={"outline"}>
             Към продукта
           </Button>
-          <div>
-            {product.salePrice ? (
-              <div>
-                <div className="text-sm line-through text-muted-foreground">
-                  {formatPrice(product.originalPrice)}
-                </div>
-                <div className="text-xl text-destructive">
-                  {formatPrice(product.salePrice)}
-                </div>
-              </div>
-            ) : (
-              <div className="text-xl">
-                {formatPrice(product.originalPrice)}
-              </div>
-            )}
-          </div>
+
+          <ProductPrice product={product} />
         </div>
       </Link>
     </div>
