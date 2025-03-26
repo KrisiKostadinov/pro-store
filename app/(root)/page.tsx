@@ -1,8 +1,9 @@
-import { prisma } from "@/db/prisma";
+import { LATEST_PRODUCTS_LIMIT } from "@/lib/constants";
+import { getLatestProducts } from "@/lib/actions/product.actions";
 import ProductList from "@/components/shared/product/product-list";
 
 export default async function Home() {
-  const products = await prisma.product.findMany();
+  const products = await getLatestProducts(LATEST_PRODUCTS_LIMIT, "desc");
 
   return (
     <>
@@ -10,7 +11,11 @@ export default async function Home() {
         MISSISROSE.COM
       </h1>
 
-      <ProductList title="Най-нови продукти" products={products} limit={10} />
+      <ProductList
+        title="Най-нови продукти"
+        products={products}
+        limit={LATEST_PRODUCTS_LIMIT}
+      />
     </>
   );
 }
