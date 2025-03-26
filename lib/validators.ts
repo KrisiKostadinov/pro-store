@@ -17,3 +17,13 @@ export const signInFormSchema = z.object({
   email: z.string().email({ message: "Невалиден имейл адрес." }),
   password: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
 });
+
+export const signUpFormSchema = z.object({
+  name: z.string().min(3, { message: "Името трябва да съдържа поне 3 синвола." }),
+  email: z.string().email({ message: "Невалиден имейл адрес." }),
+  password: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
+  confirmPassword: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Паролите не съвпадат.",
+  path: ["confirmPassword"],
+});

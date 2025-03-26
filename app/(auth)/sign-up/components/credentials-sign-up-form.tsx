@@ -9,11 +9,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signInDefaultValues } from "@/lib/constants";
-import { signInWithCredentials } from "@/lib/actions/user.actions";
+import { signUpDefaultValues } from "@/lib/constants";
+import { signUpUser } from "@/lib/actions/user.actions";
 
-export default function CredentialsSignInForm() {
-  const [data, action] = useActionState(signInWithCredentials, {
+export default function CredentialsSignUpForm() {
+  const [data, action] = useActionState(signUpUser, {
     success: false,
     message: "",
   });
@@ -21,7 +21,7 @@ export default function CredentialsSignInForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
-  const [formValues, setFormValues] = useState(signInDefaultValues);
+  const [formValues, setFormValues] = useState(signUpDefaultValues);
 
   useEffect(() => {
     if (data && !data.success && data.values) {
@@ -33,7 +33,7 @@ export default function CredentialsSignInForm() {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
   };
 
-  const SignInButton = () => {
+  const SignUpButton = () => {
     const { pending } = useFormStatus();
 
     return (
@@ -45,7 +45,7 @@ export default function CredentialsSignInForm() {
         className="cursor-pointer w-full"
       >
         <LogInIcon />
-        <span>{pending ? "Влизане..." : "Влизане"}</span>
+        <span>{pending ? "Създаване..." : "Създаване"}</span>
       </Button>
     );
   };
@@ -55,6 +55,18 @@ export default function CredentialsSignInForm() {
       <input type="hidden" value={callbackUrl} />
 
       <div className="space-y-5">
+        <div className="space-y-1">
+          <Label htmlFor="name">Име и фамилия</Label>
+          <Input
+            type="text"
+            name="name"
+            id="name"
+            required
+            autoComplete="name"
+            defaultValue={formValues.name}
+            onChange={handleChange}
+          />
+        </div>
         <div className="space-y-1">
           <Label htmlFor="email">Имейл</Label>
           <Input
@@ -75,11 +87,25 @@ export default function CredentialsSignInForm() {
             id="password"
             required
             autoComplete="password"
-            defaultValue={signInDefaultValues.password}
+            defaultValue={signUpDefaultValues.password}
+            onChange={handleChange}
           />
         </div>
 
-        {data && !data.success && (
+        <div className="space-y-1">
+          <Label htmlFor="confirmPassword">Потвърдете паролата</Label>
+          <Input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            required
+            autoComplete="confirmPassword"
+            defaultValue={signUpDefaultValues.confirmPassword}
+            onChange={handleChange}
+          />
+        </div>
+
+        {data && !data.success && data.message && (
           <div className="text-destructive text-lg">{data.message}</div>
         )}
         {data && !data.success && data.messages?.length && (
@@ -91,12 +117,12 @@ export default function CredentialsSignInForm() {
         )}
 
         <div>
-          <SignInButton />
+          <SignUpButton />
         </div>
 
-        <Link href={"/sign-up"} className="flex justify-center">
+        <Link href={"/sign-in"} className="flex justify-center">
           <Button variant={"link"} className="cursor-pointer">
-            Създаване на профил
+            Влизане в профила
           </Button>
         </Link>
       </div>
