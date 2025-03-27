@@ -24,6 +24,7 @@ model User {
   updatedAt     DateTime  @updatedAt @map("updated_at")
   Account       Account[]
   Session       Session[]
+  Cart          Cart[]
 
   @@map("users")
 }
@@ -90,4 +91,17 @@ model Product {
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   @@map("products")
+}
+
+model Cart {
+  id            String   @id @default(cuid()) @db.VarChar(191)
+  userId        String?
+  sessionCartId String
+  items         Json     @default("[]")
+  itemsPrice    Float
+  totalPrice    Float
+  shippingPrice Float
+  taxPrice      Float
+  createdAt     DateTime @default(now()) @db.Timestamp(6)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

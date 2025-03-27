@@ -50,3 +50,7 @@ export function handleError(error: unknown, _values: Record<string, unknown> = {
     values: _values,
   };
 }
+
+export function formatNumberWithDecimal(value: number): string {
+  return value.toFixed(2);
+}

@@ -1,8 +1,10 @@
 import { z } from "zod";
 
-import { insertProductSchema } from "@/lib/validators";
-
-export type Product = z.infer<typeof insertProductSchema>;
+import {
+  cartItemSchema,
+  insertCartSchema,
+  insertProductSchema,
+} from "@/lib/validators";
 
 export interface FormResponse {
   success: boolean;
@@ -10,3 +12,11 @@ export interface FormResponse {
   messages?: string[];
   values?: Record<string, any>;
 }
+
+export type Product = z.infer<typeof insertProductSchema> & {
+  id: string;
+  createdAt: Date;
+};
+
+export type Cart = z.infer<typeof insertCartSchema>;
+export type CartItem = z.infer<typeof cartItemSchema>;

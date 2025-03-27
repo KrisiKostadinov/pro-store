@@ -1,13 +1,20 @@
 import { z } from "zod";
+import { formatNumberWithDecimal } from "./utils";
+
+const currency = z.string()
+  .refine((value) =>
+  /^\d+(\.\d{2})?$/
+  .test(formatNumberWithDecimal(Number(value))),
+  { message: "Цената трябва да съдържа точно две числа след десетичната запетая." });
 
 export const insertProductSchema = z.object({
   name: z.string().min(3, { message: "Името на продукта трябва да съдържа поне 3 синвола." }),
   slug: z.string().min(3, { message: "URL адресът на продукта трябва да съдържа поне 3 синвола." }),
   shortDescription: z.string().min(3, { message: "Краткото описание на продукта трябва да съдържа поне 3 синвола." }),
   description: z.string().min(3, { message: "Описанието на продукта трябва да съдържа поне 3 синвола." }),
-  originalPrice: z.number().int().positive({ message: "Цената на продукта трябва да бъде положително число." }),
+  originalPrice: currency,
   isOnSale: z.boolean(),
-  salePrice: z.number().int().positive({ message: "Цената на промоция на продукта трябва да бъде положително число." }).optional(),
+  salePrice: currency.optional(),
   stock: z.number().int().positive({ message: "Наличността на продукта трябва да бъде положително число." }),
   images: z.array(z.string()).min(1, { message: "Трябва да качите поне една снимка на продукта." }),
   isFeatured: z.boolean(),
@@ -26,4 +33,23 @@ export const signUpFormSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Паролите не съвпадат.",
   path: ["confirmPassword"],
+});
+
+export const cartItemSchema = z.object({
+  productId: z.string().min(1, { message: "Продуктът е задължителен." }),
+  name: z.string().min(1, { message: "Името е задължително." }),
+  slug: z.string().min(1, { message: "URL адресът е задължителен." }),
+  qty: z.number().int().nonnegative({ message: "Количеството трябва да бъде положително число." }),
+  image: z.string().min(1, { message: "Снимката е задължителна." }),
+  price: currency,
+});
+
+export const insertCartSchema = z.object({
+  items: z.array(cartItemSchema),
+  itemsPrice: currency,
+  totalPrice: currency,
+  shippingPrice: currency,
+  taxPrice: currency,
+  sessionCartId: z.string().min(1, { message: "sessionCartId е задължителен и не може да бъде празен." }),
+  userId: z.string().optional().nullable(),
 });
