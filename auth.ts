@@ -40,21 +40,34 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     error: "/sign-in",
   },
   callbacks: {
+    async session({ session, user, token, trigger }) {
+      session.user.id = token.sub ?? "";
+      session.user.role = token.role;
+      session.user.name = token.name;
+
+      if (trigger === "update") {
+        session.user.name = user.name;
+      }
+
+      return session;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.name = user.name;
         token.image = user.image;
+
+        if (!user.name) {
+          token.name = user.email!.split("@")[0];
+  
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { name: token.name },
+          });
+        }
       }
+
       return token;
-    },
-    async session({ token, session }) {
-      if (token) {
-        session.user.role = token.role;
-        token.name = token.name;
-        token.image = token.image;
-      }
-      return session;
     },
   },
 });
