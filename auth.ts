@@ -4,6 +4,7 @@ import { compareSync } from "bcrypt-ts-edge";
 
 import { prisma } from "@/db/prisma";
 import { signInFormSchema } from "@/lib/validators";
+import { NextResponse } from "next/server";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
@@ -59,7 +60,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (!user.name) {
           token.name = user.email!.split("@")[0];
-  
+
           await prisma.user.update({
             where: { id: user.id },
             data: { name: token.name },

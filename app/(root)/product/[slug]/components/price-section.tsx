@@ -6,6 +6,7 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@prisma/client";
 import ProductPrice from "@/components/shared/product/product-price";
+import AddToCart from "@/components/shared/product/add-to-cart";
 
 type Props = {
   product: Product;
@@ -20,9 +21,11 @@ export default function PriceSection({ product }: Props) {
   };
 
   const decrease = () => {
-    if (quantity <= 1) return;
     setQuantity(quantity - 1);
   };
+
+  const productPrice = product.salePrice ? product.salePrice : product.originalPrice;
+  const productImage = JSON.parse(product.images as string)[0] || "";
 
   return (
     <div className="border rounded mt-5 p-5 flex flex-col gap-5">
@@ -52,9 +55,14 @@ export default function PriceSection({ product }: Props) {
           <MinusIcon />
         </Button>
       </div>
-      <button className="bg-destructive hover:bg-destructive/60 text-white md:text-lg py-3 rounded cursor-pointer">
-        Добави в количката
-      </button>
+      <AddToCart item={{
+        productId: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: productPrice.toString(),
+        qty: 1,
+        image: productImage,
+      }} />
     </div>
   );
 }
