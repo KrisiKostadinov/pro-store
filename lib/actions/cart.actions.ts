@@ -13,7 +13,7 @@ const TAX_PRICE = Number(process.env.TAX_PRICE) || 0.20;
 
 const calcPrice = (items: CartItem[]) => {
   const itemsPrice = round2(items.reduce((acc, item) => acc + Number(item.price) * item.qty, 0));
-  const shippingPrice = round2(itemsPrice > 100 ? 0 : 100);
+  const shippingPrice = round2(itemsPrice > 100 ? 0 : 0);
   const taxPrice = round2(TAX_PRICE * itemsPrice);
   const totalPrice = round2(itemsPrice + shippingPrice + taxPrice);
 
@@ -134,7 +134,7 @@ export async function removeItemFromCart(productId: string) {
     if (!exist) throw new Error("Този продукт не е намерен в количката.");
 
     if (exist.qty === 1) {
-      cart.items = (cart.items as CartItem[]).filter((x) => productId !== productId);
+      cart.items = (cart.items as CartItem[]).filter((x) => x.productId !== productId);
     } else {
       (cart.items as CartItem[]).find((x) => x.productId === exist.productId)!.qty = exist.qty - 1;
     }

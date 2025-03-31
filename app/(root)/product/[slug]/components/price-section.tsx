@@ -68,6 +68,11 @@ export default function PriceSection({ cart, product }: Props) {
 
   const decrease = () => {
     startTransition(async () => {
+      if (!existItem) {
+        setQuantity(quantity - 1);
+        return;
+      }
+
       const response = await removeItemFromCart(product.id);
 
       if (response.success) {
@@ -102,7 +107,7 @@ export default function PriceSection({ cart, product }: Props) {
           variant={"outline"}
           size={"icon"}
           onClick={decrease}
-          disabled={!!!existItem || isPending}
+          disabled={(!!!existItem && quantity === 1) || isPending}
         >
           <MinusIcon />
         </Button>
