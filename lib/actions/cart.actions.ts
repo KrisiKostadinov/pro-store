@@ -64,7 +64,33 @@ export async function addToCart(values: CartItem) {
         message: "Добавено в количката!",
       };
     } else {
+      const existItem = (cart.items as CartItem[]).find((x) => x.productId === item.productId);
       
+      if (existItem) {
+        if (product.stock < existItem.qty + 1) {
+          throw new Error("Няма достатъчно количество.");
+        }
+
+        (cart.items as CartItem[]).find((x) => x.productId === item.productId)!.qty = existItem.qty + 1;
+      } else {
+        if (product.stock < 1) throw new Error("Няма достатъчно количество.");
+        cart.items.push(item);
+      }
+      await prisma.cart.update({
+        where: { id: cart.id },
+        data: {
+          items: cart.items,
+          ...calcPrice(cart.items),
+        }
+      });
+
+      revalidatePath(`/product/${product.slug}`);
+
+      const message = `${product.name} ${existItem ? "е актуализиран" : "е добавен"} в киличката.`;
+      return {
+        success: true,
+        message: message,
+      }
     }
   } catch (error) {
     return handleError(error, values) as FormResponse;

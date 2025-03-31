@@ -25,8 +25,8 @@ export default function AddToCart({ item }: Props) {
 
     if (response.success) {
       showToast(
-        response.message,
-        "Прегледайте количката, за да завършите покупката.",
+        response.message as string,
+        "",
         "/cart",
         "Преглед"
       );
