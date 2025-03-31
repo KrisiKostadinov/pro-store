@@ -43,18 +43,13 @@ export async function addToCart(values: CartItem) {
 
     if (!cart) {
       const newCart = insertCartSchema.parse({
-        userId: userId ?? undefined,
+        userId: userId ?? null,
         items: [item],
         sessionCartId: sessionCartId,
         ...calcPrice([item]),
       });
       await prisma.cart.create({
-        data: {
-          userId: userId ?? null,
-          items: [item],
-          sessionCartId: sessionCartId,
-          ...calcPrice([item]),
-        },
+        data: newCart,
       });
 
       revalidatePath(`/product/${product.slug}`);
@@ -136,7 +131,7 @@ export async function removeItemFromCart(productId: string) {
     if (!cart) throw new Error("Количката не е намерена.");
 
     const exist = (cart.items as CartItem[]).find((x) => x.productId === productId);
-    if (!exist) throw new Error("Този item не е намерен.");
+    if (!exist) throw new Error("Този продукт не е намерен в количката.");
 
     if (exist.qty === 1) {
       cart.items = (cart.items as CartItem[]).filter((x) => productId !== productId);
@@ -159,6 +154,7 @@ export async function removeItemFromCart(productId: string) {
       message: `${product.name} е изтрит от количката.`,
     }
   } catch (error) {
-    return handleError(error) as FormResponse;
+    console.log(error);
+    return handleError(error, ) as FormResponse;
   }
 }

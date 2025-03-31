@@ -15,9 +15,10 @@ import {
 type Props = {
   item: CartItem;
   cart: Cart | undefined;
+  isLoading: boolean;
 };
 
-export default function AddToCart({ cart, item }: Props) {
+export default function AddToCart({ cart, item, isLoading }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -39,18 +40,26 @@ export default function AddToCart({ cart, item }: Props) {
     });
   };
 
-  const existItem =
-    cart &&
-    (cart.items as CartItem[]).find((x) => x.productId === item.productId);
+  const existItem = cart && (cart.items as CartItem[]).find((x) => x.productId === item.productId);
 
   return existItem ? (
     <button
-      className="bg-destructive hover:bg-destructive/60 text-white md:text-lg py-3 rounded cursor-pointer"
+      className="bg-destructive hover:bg-destructive/60 disabled:bg-destructive/60 text-white md:text-lg py-3 rounded cursor-pointer"
       onClick={() => router.push("/cart")}
+      disabled={isLoading}
     >
       <div className="flex items-center justify-center gap-2">
-        <ShoppingCartIcon />
-        <span>Към количката</span>
+        {isLoading ? (
+          <>
+            <Loader className="w-4 h-4 animate-spin" />
+            <span>Добавяне...</span>
+          </>
+        ) : (
+          <>
+            <ShoppingCartIcon />
+            <span>Към количката</span>
+          </>
+        )}
       </div>
     </button>
   ) : (

@@ -46,7 +46,7 @@ export function handleError(error: unknown, _values: Record<string, unknown> = {
 
   return {
     success: false,
-    message: message,
+    message: error instanceof Error ? error.message : message,
     values: _values,
   };
 }

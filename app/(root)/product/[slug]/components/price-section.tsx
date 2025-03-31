@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { MinusIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Cart, Product } from "@prisma/client";
 import ProductPrice from "@/components/shared/product/product-price";
 import AddToCart from "@/components/shared/product/add-to-cart";
-import { removeItemFromCart } from "@/lib/actions/cart.actions";
-import { showErrorToast, showToast } from "@/components/shared/helpers/client-helpers";
+import { addToCart, removeItemFromCart } from "@/lib/actions/cart.actions";
+import {
+  showErrorToast,
+  showToast,
+} from "@/components/shared/helpers/client-helpers";
+import { CartItem } from "@/types";
 
 type Props = {
   product: Product;
@@ -16,12 +20,50 @@ type Props = {
 };
 
 export default function PriceSection({ cart, product }: Props) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number>(1);
   const [isPending, startTransition] = useTransition();
 
+  const productPrice = product.salePrice ? product.salePrice : product.originalPrice;
+  const productImage = JSON.parse(product.images as string)[0] || "";
+  const existItem = cart && (cart.items as CartItem[]).find((x) => x.productId === product.id);
+
+  useEffect(() => {
+    if (existItem && existItem.qty) {
+      setQuantity(existItem.qty);
+    }
+    item.qty = quantity;
+  }, [cart, quantity]);
+  
+  const item = {
+    productId: product.id,
+    name: product.name,
+    slug: product.slug,
+    price: productPrice.toString(),
+    qty: existItem ? existItem.qty : 1,
+    image: productImage,
+  };
+
   const increase = () => {
-    if (quantity >= product.stock) return;
-    setQuantity(quantity + 1);
+    if (!existItem) {
+      setQuantity(quantity + 1);
+      return;
+    }
+
+    startTransition(async () => {
+      const response = await addToCart(item);
+
+      if (!response.success) {
+        showErrorToast(
+          "Грешка при добавянето!",
+          "Не можете да добавите повече, тъй като наличността е ограничена."
+        );
+        return;
+      }
+
+      if (response.success) {
+        showToast(response.message as string, "", "/cart", "Преглед");
+      }
+    });
   };
 
   const decrease = () => {
@@ -30,14 +72,12 @@ export default function PriceSection({ cart, product }: Props) {
 
       if (response.success) {
         showToast(response.message as string, "", "/cart", "Преглед");
+      } else {
+        showErrorToast("Грешка при добавянето!", response.message);
+        return;
       }
     });
   };
-
-  const productPrice = product.salePrice
-    ? product.salePrice
-    : product.originalPrice;
-  const productImage = JSON.parse(product.images as string)[0] || "";
 
   return (
     <div className="border rounded mt-5 p-5 flex flex-col gap-5">
@@ -47,7 +87,7 @@ export default function PriceSection({ cart, product }: Props) {
           variant={"outline"}
           size={"icon"}
           onClick={increase}
-          disabled={quantity >= product.stock}
+          disabled={quantity >= product.stock || isPending}
         >
           <PlusIcon />
         </Button>
@@ -62,22 +102,12 @@ export default function PriceSection({ cart, product }: Props) {
           variant={"outline"}
           size={"icon"}
           onClick={decrease}
-          disabled={isPending}
+          disabled={!!!existItem || isPending}
         >
           <MinusIcon />
         </Button>
       </div>
-      <AddToCart
-        cart={cart}
-        item={{
-          productId: product.id,
-          name: product.name,
-          slug: product.slug,
-          price: productPrice.toString(),
-          qty: 1,
-          image: productImage,
-        }}
-      />
+      <AddToCart cart={cart} item={item} isLoading={isPending} />
     </div>
   );
 }
