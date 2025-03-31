@@ -4,6 +4,7 @@ import { getProductBySlug } from "@/lib/actions/product.actions";
 import PriceSection from "@/app/(root)/product/[slug]/components/price-section";
 import MiddleSection from "@/app/(root)/product/[slug]/components/middle-section";
 import ImagesSection from "@/app/(root)/product/[slug]/components/images-section";
+import { getMyCart } from "@/lib/actions/cart.actions";
 
 export default async function ProductDetailsPage(props: {
   params: Promise<{ slug: string }>;
@@ -12,6 +13,8 @@ export default async function ProductDetailsPage(props: {
 
   const product = await getProductBySlug(slug);
   if (!product) notFound();
+
+  const cart = await getMyCart();
 
   return (
     <section>
@@ -23,7 +26,7 @@ export default async function ProductDetailsPage(props: {
           <MiddleSection product={product} />
         </div>
         <div className="col-span-1">
-          <PriceSection product={product} />
+          <PriceSection cart={cart} product={product} />
         </div>
       </div>
     </section>

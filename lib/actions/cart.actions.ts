@@ -121,3 +121,44 @@ export async function getMyCart() {
     taxPrice: cart.taxPrice.toString(),
   }
 }
+
+export async function removeItemFromCart(productId: string) {
+  try {
+    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+    if (!sessionCartId) throw new Error("Сесията на количката не е намерена.");
+
+    const product = await prisma.product.findFirst({
+      where: { id: productId }
+    });
+    if (!product) throw new Error("Този продукт не е намерен.");
+
+    const cart = await getMyCart();
+    if (!cart) throw new Error("Количката не е намерена.");
+
+    const exist = (cart.items as CartItem[]).find((x) => x.productId === productId);
+    if (!exist) throw new Error("Този item не е намерен.");
+
+    if (exist.qty === 1) {
+      cart.items = (cart.items as CartItem[]).filter((x) => productId !== productId);
+    } else {
+      (cart.items as CartItem[]).find((x) => x.productId === exist.productId)!.qty = exist.qty - 1;
+    }
+
+    await prisma.cart.update({
+      where: { id: cart.id },
+      data: {
+        items: cart.items,
+        ...calcPrice(cart.items),
+      }
+    });
+    
+    revalidatePath(`/product/${product.slug}`);
+
+    return {
+      success: true,
+      message: `${product.name} е изтрит от количката.`,
+    }
+  } catch (error) {
+    return handleError(error) as FormResponse;
+  }
+}
