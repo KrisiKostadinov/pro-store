@@ -54,3 +54,13 @@ export function handleError(error: unknown, _values: Record<string, unknown> = {
 export function formatNumberWithDecimal(value: number): string {
   return value.toFixed(2);
 }
+
+export function round2(value: number | string) {
+  if (typeof value === "number") {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
+  } else if (typeof value === "string") {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+  } else {
+    throw new Error("Стойността не е 'number' или 'string'.");
+  }
+}
