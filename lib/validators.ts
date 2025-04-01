@@ -53,3 +53,9 @@ export const insertCartSchema = z.object({
   sessionCartId: z.string().min(1, { message: "sessionCartId е задължителен и не може да бъде празен." }),
   userId: z.string().optional().nullable(),
 });
+
+export const shippingAddressSchema = z.object({
+  fullname: z.string().min(1, { message: "Моля, въведете името си." }),
+  city: z.string().min(1, { message: "Моля, въведете град за доставка." }),
+  streetAddress: z.string().min(1, { message: "Моля, въведете адрес за доставка." })
+});
