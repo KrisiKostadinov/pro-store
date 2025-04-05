@@ -3,10 +3,10 @@
 import { hashSync } from "bcrypt-ts-edge";
 import { prisma } from "@/db/prisma";
 
-import { shippingAddressSchema, signInFormSchema, signUpFormSchema } from "@/lib/validators";
+import { paymentMethodSchema, shippingAddressSchema, signInFormSchema, signUpFormSchema } from "@/lib/validators";
 import { auth, signIn, signOut } from "@/auth";
 import { handleError } from "@/lib/utils";
-import { FormResponse, ShippingAddress } from "@/types";
+import { FormResponse, PaymentMethod, ShippingAddress } from "@/types";
 
 export async function signInWithCredentials(
   _prevState: unknown,
@@ -93,6 +93,30 @@ export async function updateUserAddress(data: ShippingAddress) {
     });
 
     return { success: true, message: "Данните на профила са запазени." }
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+export async function updateUserPaymentMethod(data: PaymentMethod) {
+  try {
+    const session = await auth();
+    const currentUser = await prisma.user.findFirst({
+      where: { id: session?.user?.id },
+    });
+
+    if (!currentUser) {
+      throw new Error("Този потребител не е намерен.");
+    }
+
+    const paymentMethod = paymentMethodSchema.parse(data);
+
+    await prisma.user.update({
+      where: { id: session?.user?.id },
+      data: { paymentMethod: paymentMethod.type },
+    });
+
+    return { success: true, message: "Данните на профила са запазени." };
   } catch (error) {
     return handleError(error);
   }

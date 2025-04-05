@@ -55,3 +55,15 @@ export const shippingAddressSchema = z.object({
   streetAddress: z.string({ message: "Това поле е задължително!" }).min(1, { message: "Моля, въведете адрес за доставка." }),
   phoneNumber: z.string({ message: "Това поле е задължително!" }).min(1, { message: "Моля, въведете телефон за потвърждение на пратката." }),
 });
+
+export const paymentMethods = ["PayPal", "CARD", "CASH"] as const;
+
+export enum PaymentMethods {
+  CASH = "Наложен платеж",
+  CARD = "Кредитна/Дебитна карта",
+  PAYPAL = "PayPal",
+}
+
+export const paymentMethodSchema = z.object({
+  type: z.string().min(1, { message: "Моля, изберете метод на плащане." }),
+});
