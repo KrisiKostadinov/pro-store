@@ -92,19 +92,6 @@ export default function CredentialsSignUpForm() {
           />
         </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="confirmPassword">Потвърдете паролата</Label>
-          <Input
-            type="password"
-            name="confirmPassword"
-            id="confirmPassword"
-            required
-            autoComplete="confirmPassword"
-            defaultValue={signUpDefaultValues.confirmPassword}
-            onChange={handleChange}
-          />
-        </div>
-
         {data && !data.success && data.message && (
           <div className="text-destructive text-lg">{data.message}</div>
         )}

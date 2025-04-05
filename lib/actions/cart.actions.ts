@@ -27,7 +27,7 @@ const calcPrice = (items: CartItem[]) => {
 
 export async function addToCart(values: CartItem) {
   try {
-    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+    const sessionCartId = (await cookies()).get("session-cart-id")?.value;
     if (!sessionCartId) throw new Error("Сесията на количката не е намерена.");
 
     const session = await auth();
@@ -93,7 +93,7 @@ export async function addToCart(values: CartItem) {
 }
 
 export async function getMyCart() {
-  const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+  const sessionCartId = (await cookies()).get("session-cart-id")?.value;
   if (!sessionCartId) throw new Error("Сесията на количката не е намерена.");
 
   const session = await auth();
@@ -101,8 +101,10 @@ export async function getMyCart() {
     
   const cart = await prisma.cart.findFirst({
     where: {
-      sessionCartId: sessionCartId,
-      userId: userId,
+      OR: [
+        { sessionCartId: sessionCartId },
+        { userId: userId }
+      ]
     }
   });
 
@@ -119,7 +121,7 @@ export async function getMyCart() {
 
 export async function removeItemFromCart(productId: string) {
   try {
-    const sessionCartId = (await cookies()).get("sessionCartId")?.value;
+    const sessionCartId = (await cookies()).get("session-cart-id")?.value;
     if (!sessionCartId) throw new Error("Сесията на количката не е намерена.");
 
     const product = await prisma.product.findFirst({

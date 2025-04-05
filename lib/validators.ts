@@ -29,10 +29,6 @@ export const signUpFormSchema = z.object({
   name: z.string().min(3, { message: "Името трябва да съдържа поне 3 синвола." }),
   email: z.string().email({ message: "Невалиден имейл адрес." }),
   password: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
-  confirmPassword: z.string().min(6, { message: "Паролата трябва да съдържа поне 6 символа." }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Паролите не съвпадат.",
-  path: ["confirmPassword"],
 });
 
 export const cartItemSchema = z.object({
@@ -50,12 +46,12 @@ export const insertCartSchema = z.object({
   totalPrice: currency,
   shippingPrice: currency,
   taxPrice: currency,
-  sessionCartId: z.string().min(1, { message: "sessionCartId е задължителен и не може да бъде празен." }),
+  sessionCartId: z.string().min(1, { message: "session-cart-id е задължителен и не може да бъде празен." }),
   userId: z.string().optional().nullable(),
 });
 
 export const shippingAddressSchema = z.object({
-  fullname: z.string().min(1, { message: "Моля, въведете името си." }),
-  city: z.string().min(1, { message: "Моля, въведете град за доставка." }),
-  streetAddress: z.string().min(1, { message: "Моля, въведете адрес за доставка." })
+  fullname: z.string({ message: "Това поле е задължително!" }).min(1, { message: "Моля, въведете името си." }),
+  streetAddress: z.string({ message: "Това поле е задължително!" }).min(1, { message: "Моля, въведете адрес за доставка." }),
+  phoneNumber: z.string({ message: "Това поле е задължително!" }).min(1, { message: "Моля, въведете телефон за потвърждение на пратката." }),
 });

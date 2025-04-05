@@ -24,16 +24,26 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  if (session && session.user && session.user.role !== "ADMIN" && isAdminRoute) {
+  if (
+    session &&
+    session.user &&
+    session.user.role !== "ADMIN" &&
+    isAdminRoute
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  const sessionCartId = request.cookies.get("sessionCartId");
+  const sessionCartId = request.cookies.get("session-cart-id");
 
   if (!sessionCartId) {
     const newSessionCartId = crypto.randomUUID();
-    const response = NextResponse.next();
-    response.cookies.set("sessionCartId", newSessionCartId);
+    const newRequestHeaders = new Headers(request.headers);
+
+    const response = NextResponse.next({
+      request: { headers: newRequestHeaders },
+    });
+
+    response.cookies.set("session-cart-id", newSessionCartId);
     return response;
   }
 
